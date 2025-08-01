@@ -1,13 +1,12 @@
 package com.dk.concurrent.startathread;
 
+import java.util.List;
+
 public class MultiplicationTest {
     public static void main(String[] args) {
-        Thread[] threads =  new MultiplicationThread[10];
+        Tables tables = new Tables(10);
+        List<String> result = tables.getMultiplicationTable();
 
-        for(int num = 1; num <= 10; num++) {
-            threads[num - 1] = new MultiplicationThread(num);
-            threads[num - 1].start();
-        }
-
+        result.stream().forEach(System.out :: println);
     }
 }
