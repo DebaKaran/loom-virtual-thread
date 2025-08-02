@@ -7,11 +7,11 @@ import java.util.concurrent.BlockingQueue;
 
 public class ResourceProcessing implements Runnable {
 
-    private BlockingQueue<String> queue;
+    private BlockingQueue<LineMessage> queue;
     private String resourceName;
     private Map<String, Map<String, Integer>> globalMap;
 
-    public ResourceProcessing(BlockingQueue<String> queue,
+    public ResourceProcessing(BlockingQueue<LineMessage> queue,
                               String resourceName,
                               Map<String, Map<String, Integer>> globalMap) {
         this.queue = queue;
@@ -26,15 +26,15 @@ public class ResourceProcessing implements Runnable {
         try {
             System.out.println("processing " + resourceName);
             while (true) {
-                String line = queue.take();
+                LineMessage line = queue.take();
 
-                if (line.equals("__EOF__")) { // safer than "EOF"
+                if (line.isEnd()) { // safer than "EOF"
                     globalMap.put(resourceName, wordCount);
                     System.out.println("End of processing " + resourceName);
                     return;
                 }
 
-                for (String word : line.trim().split("\\s+")) {
+                for (String word : line.getLine().split("\\s+")) {
                     wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
                 }
             }

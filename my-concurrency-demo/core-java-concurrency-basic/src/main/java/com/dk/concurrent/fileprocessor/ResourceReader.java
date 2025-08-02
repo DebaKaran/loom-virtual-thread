@@ -9,15 +9,16 @@ import java.util.concurrent.BlockingQueue;
 
 public class ResourceReader implements Runnable {
     private String resourceName;
-    private BlockingQueue<String> queue ;
+    private BlockingQueue<LineMessage> queue ;
 
-    public ResourceReader(String resourceName, BlockingQueue<String> queue) {
+    public ResourceReader(String resourceName, BlockingQueue<LineMessage> queue) {
         this.resourceName = resourceName;
         this.queue = queue;
     }
 
     @Override
     public void run() {
+
         // Simulate IO delay
         System.out.println("Starting Reading for " + resourceName + " and it will take 4 seconds...");
         try {
@@ -38,10 +39,10 @@ public class ResourceReader implements Runnable {
 
             String line;
             while ((line = reader.readLine()) != null) {
-                queue.put(line);
+                queue.put(LineMessage.of(line));
             }
 
-            queue.put("__EOF__"); // signal end of file
+            queue.put(LineMessage.end()); // signal end of file
             System.out.println("Reading for "+resourceName+" is completed");
         } catch (IOException e) {
             throw new RuntimeException("Error reading " + resourceName, e);

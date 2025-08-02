@@ -19,11 +19,11 @@ public class Orchestrator {
         // Global result map
         Map<String, Map<String, Integer>> globalMap = new ConcurrentHashMap<>();
 
-        BlockingQueue<String> prevQueue = null;
+        BlockingQueue<LineMessage> prevQueue = null;
         String prevFile = null;
 
         for(String file : files) {
-            BlockingQueue<String> queue = new LinkedBlockingQueue<>();
+            BlockingQueue<LineMessage> queue = new LinkedBlockingQueue<>();
 
             // Only for first time, we dont want ResourceProcessing to run
             //implcitly prevQueue will be also null when prevFile is null
