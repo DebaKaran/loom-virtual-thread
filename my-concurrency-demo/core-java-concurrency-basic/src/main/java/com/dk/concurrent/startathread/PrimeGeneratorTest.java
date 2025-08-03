@@ -1,6 +1,5 @@
 package com.dk.concurrent.startathread;
 
-import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 public class PrimeGeneratorTest {
