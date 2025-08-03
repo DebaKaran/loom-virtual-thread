@@ -9,6 +9,7 @@ public class LoggerTaskTest {
         for(int i = 0; i < 2; i++) {
             LoggerTask task = new LoggerTask(i);
             Thread loggerThread = new Thread(task, "LoggerThread-"+i);
+            loggerThread.setUncaughtExceptionHandler(new ExceptionHandler());
             loggerThread.start();
         }
 
