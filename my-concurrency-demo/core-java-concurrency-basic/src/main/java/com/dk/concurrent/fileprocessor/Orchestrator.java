@@ -6,9 +6,11 @@ import java.util.concurrent.*;
 
 public class Orchestrator {
 
-    private final int numberofCores = Runtime.getRuntime().availableProcessors();
+    private final int N_CPU_CORES = Runtime.getRuntime().availableProcessors();
 
-    private final ExecutorService executor = Executors.newFixedThreadPool(2 * numberofCores);
+    private final ExecutorService cpuPool = Executors.newFixedThreadPool(N_CPU_CORES);
+    private final ExecutorService ioPool = Executors.newCachedThreadPool();
+
 
     public Map<String, Map<String, Integer>> orchestrate(String folderName) {
         final List<String> files = ResourceFileFinder.findFiles(folderName);
@@ -19,45 +21,32 @@ public class Orchestrator {
         // Global result map
         Map<String, Map<String, Integer>> globalMap = new ConcurrentHashMap<>();
 
-        BlockingQueue<LineMessage> prevQueue = null;
-        String prevFile = null;
 
         for(String file : files) {
             BlockingQueue<LineMessage> queue = new LinkedBlockingQueue<>();
-
-            // Only for first time, we dont want ResourceProcessing to run
-            //implcitly prevQueue will be also null when prevFile is null
-
-            if(prevFile != null) {
-             executor.submit(new ResourceProcessing(prevQueue, prevFile, globalMap));
-            }
-
-            executor.submit(new ResourceReader(file, queue));
-
-            prevQueue = queue;
-            prevFile = file;
+            ioPool.submit(new ResourceReader(file, queue));
+            cpuPool.submit(new ResourceProcessing(queue, file, globalMap));
         }
 
         //read the last file
-        if(prevFile != null) {
-            executor.submit(new ResourceProcessing(prevQueue, prevFile, globalMap));
-        }
 
-        executor.shutdown();
-        terminate();
+        cpuPool.shutdown();
+        ioPool.shutdown();
+        terminate(cpuPool);
+        terminate(ioPool);
         return  globalMap;
     }
 
-    private void terminate() {
+    private void terminate(ExecutorService service) {
         boolean terminated;
         try {
-            terminated = executor.awaitTermination(10, TimeUnit.SECONDS);
+            terminated = service.awaitTermination(10, TimeUnit.SECONDS);
             if (!terminated) {
                 System.err.println("Executor did not terminate in the specified time.");
-                executor.shutdownNow(); // optional: force shutdown
+                service.shutdownNow(); // optional: force shutdown
             }
         } catch (InterruptedException e) {
-            executor.shutdownNow(); // cancel currently executing tasks
+            service.shutdownNow(); // cancel currently executing tasks
             Thread.currentThread().interrupt(); // preserve interrupt status
             throw new RuntimeException("Executor was interrupted", e);
         }

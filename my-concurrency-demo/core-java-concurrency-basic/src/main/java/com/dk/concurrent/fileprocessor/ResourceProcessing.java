@@ -29,7 +29,7 @@ public class ResourceProcessing implements Runnable {
                 LineMessage line = queue.take();
 
                 if (line.isEnd()) { // safer than "EOF"
-                    globalMap.put(resourceName, wordCount);
+                    globalMap.putIfAbsent(resourceName, wordCount);
                     System.out.println("End of processing " + resourceName);
                     return;
                 }

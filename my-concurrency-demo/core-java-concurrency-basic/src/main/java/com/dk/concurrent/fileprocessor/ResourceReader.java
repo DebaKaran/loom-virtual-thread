@@ -39,10 +39,10 @@ public class ResourceReader implements Runnable {
 
             String line;
             while ((line = reader.readLine()) != null) {
-                queue.put(LineMessage.of(line));
+                queue.put(LineMessage.of(line, resourceName));
             }
 
-            queue.put(LineMessage.end()); // signal end of file
+            queue.put(LineMessage.end(resourceName)); // signal end of file
             System.out.println("Reading for "+resourceName+" is completed");
         } catch (IOException e) {
             throw new RuntimeException("Error reading " + resourceName, e);
