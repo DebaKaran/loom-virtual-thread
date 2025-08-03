@@ -10,6 +10,7 @@ public class LoggerTask implements Runnable{
     @Override
     public void run() {
         System.out.println("Message: Log generated at: "+System.currentTimeMillis());
+        if(count == 1) throw new NullPointerException("NPE");
         int value = 1 /count;
         System.out.println("Value is: "+value);
     }

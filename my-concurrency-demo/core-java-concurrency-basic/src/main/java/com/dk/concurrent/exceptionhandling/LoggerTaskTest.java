@@ -6,11 +6,14 @@ public class LoggerTaskTest {
 
     public static void main(String[] args) {
         System.out.println("Starting: "+Thread.currentThread().getName());
+        // Set once globally
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
         for(int i = 0; i < 2; i++) {
             LoggerTask task = new LoggerTask(i);
             Thread loggerThread = new Thread(task, "LoggerThread-"+i);
-            loggerThread.setUncaughtExceptionHandler(new ExceptionHandler());
+            //loggerThread.setUncaughtExceptionHandler(new ExceptionHandler());
             loggerThread.start();
+
         }
 
         try {
