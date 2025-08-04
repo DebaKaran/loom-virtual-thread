@@ -9,11 +9,12 @@ public class LoggerServiceTest {
 
         ExecutorService executorService = Executors.newFixedThreadPool(2);
 
-        for(int i = 1; i <= 2; i++) {
+        for(int i = 1; i <= 1_000_000; i++) {
             final int val = i;
             executorService.submit(() -> {
                service.setSessionId("Session - "+val);
-                service.log("Thread "+val);
+               service.log("Task "+val);
+                // NOTE: No remove() here -> memory retained in ThreadLocal map
             });
         }
         executorService.shutdown();
