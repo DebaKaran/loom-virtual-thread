@@ -9,11 +9,9 @@ public class LoggerService {
     }
 
     public void setSessionId(String id) {
-        sessionId.set(id);
-    }
-
-    public String getSessionId() {
-        return sessionId == null ? "": sessionId.get();
+        // Simulating a large object
+        byte[] largeData = new byte[10 * 1024 * 1024]; // 10 MB
+        sessionId.set(id + "-" + largeData.hashCode());  // Attach large data
     }
 
     public void log(String msg) {

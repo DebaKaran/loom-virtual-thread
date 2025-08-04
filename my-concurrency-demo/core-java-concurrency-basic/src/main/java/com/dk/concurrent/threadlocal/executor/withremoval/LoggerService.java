@@ -1,5 +1,7 @@
 package com.dk.concurrent.threadlocal.executor.withremoval;
 
+import java.util.Arrays;
+
 public class LoggerService {
 
     private final ThreadLocal<String> sessionId ;
@@ -9,11 +11,13 @@ public class LoggerService {
     }
 
     public void setSessionId(String id) {
-        sessionId.set(id);
+        // Simulating a large object
+        byte[] largeData = new byte[10 * 1024 * 1024]; // 10 MB
+        sessionId.set(id + "-" + Arrays.hashCode(largeData));  // Attach large data
     }
 
-    public String getSessionId() {
-        return sessionId == null ? "": sessionId.get();
+    public void clear() {
+        sessionId.remove();
     }
 
     public void log(String msg) {

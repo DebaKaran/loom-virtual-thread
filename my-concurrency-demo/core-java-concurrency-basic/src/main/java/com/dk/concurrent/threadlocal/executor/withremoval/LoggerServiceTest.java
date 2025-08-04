@@ -14,8 +14,7 @@ public class LoggerServiceTest {
             executorService.submit(() -> {
                service.setSessionId("Session - "+val);
                service.log("Task "+val);
-                // Not calling service.removeSessionId();
-                // So ThreadLocal keeps holding old large data in the thread's map
+                service.clear();
             });
             if (i % 10_000 == 0) {
                 System.out.println("Submitted: " + i);
