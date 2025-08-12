@@ -10,28 +10,39 @@ public class Account {
         this.balance = balance;
     }
 
-    public synchronized void addAmount(double amount) {
-        System.out.println(Thread.currentThread().getName() + " trying to add " + amount);
-        double temp = balance;
-        System.out.println(Thread.currentThread().getName() + " read balance: " + temp);
+    public  void addAmount(double amount) {
+        synchronized(this) {
+            System.out.println(Thread.currentThread().getName() + " trying to add " + amount);
+            double temp = balance;
+            System.out.println(Thread.currentThread().getName() + " read balance: " + temp);
 
-        temp += amount;
 
-        try { TimeUnit.MILLISECONDS.sleep(100); } catch (InterruptedException e) {}
-        balance = temp;
-        System.out.println(Thread.currentThread().getName() + " new balance: " + balance);
+            temp += amount;
+
+            try { TimeUnit.MILLISECONDS.sleep(100); } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            balance = temp;
+            System.out.println(Thread.currentThread().getName() + " new balance: " + balance);
+        }
+
     }
 
-    public synchronized void withdrawAmount(double amount) {
-        System.out.println(Thread.currentThread().getName() + " trying to withdraw " + amount);
-        double temp = balance;
-        System.out.println(Thread.currentThread().getName() + " read balance: " + temp);
+    public void withdrawAmount(double amount) {
+        synchronized(this) {
+            System.out.println(Thread.currentThread().getName() + " trying to withdraw " + amount);
+            double temp = balance;
+            System.out.println(Thread.currentThread().getName() + " read balance: " + temp);
 
-        temp -= amount;
+            temp -= amount;
 
-        try { TimeUnit.MILLISECONDS.sleep(100); } catch (InterruptedException e) {}
-        balance = temp;
-        System.out.println(Thread.currentThread().getName() + " new balance: " + balance);
+            try { TimeUnit.MILLISECONDS.sleep(100); } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            balance = temp;
+            System.out.println(Thread.currentThread().getName() + " new balance: " + balance);
+        }
+
     }
 
     public synchronized double getBalance() {
